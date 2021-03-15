@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 COMMIT_MSG=`cat $1 | egrep "^(feat|fix|docs|chore|style|refactor|perf|test|chore|revert)(\(\w+\))?:\s(\S|\w)+"`
 
 if [ "$COMMIT_MSG" = "" ]; then
