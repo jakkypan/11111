@@ -1,7 +1,7 @@
 #!/bin/sh
 
-MSG=`awk '{printf("%s",$0)}' $1`
-echo MSG
+COMMIT_MSG=`cat $1`
+echo ${COMMIT_MSG}
 if [ ${#MSG} -lt 10 ]
   then
     echo "-------------------------------------------------------------------"
