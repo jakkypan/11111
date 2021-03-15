@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #格式校验
-COMMIT_MSG=`cat $1 | egrep "^(feat|fix|docs|chore|style|refactor|perf|test|chore|revert)(\(\w+\))?:(([1-9]\d|[1-9])(\.([1-9]\d|\d)){2,})(\s)*:(\s)*(\S|\w)+"`
+REGULAR="^(feat|fix|docs|chore|style|refactor|perf|test|chore|revert)(\(\w+\))?:(([1-9]\d|[1-9])(\.([1-9]\d|\d)){2,})(\s)*:(\s)*(\S|\w)+"
+COMMIT_MSG=`cat $1 | egrep "$REGULAR"`
 
 if [ "$COMMIT_MSG" = "" ]; then
     echo "Commit message irregular，Please check. regular pattern as follow："
