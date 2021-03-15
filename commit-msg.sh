@@ -9,7 +9,10 @@ if [ "$COMMIT_MSG" = "" ]; then
     exit 1
 fi
 
-if [ ${#COMMIT_MSG} -lt 10 ]; then
+array=(${COMMIT_MSG//,/ })
+SUBJECT=${array[2]}
+echo ${SUBJECT}
+if [ ${#SUBJECT} -lt 10 ]; then
     echo "Commit message too short，Please show more detail."
     exit 1
 fi
