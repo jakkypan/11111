@@ -15,7 +15,7 @@ main() {
   fi
 
   if [ ! -d ".git" ]; then 
-    _red "Dir .git not find, Please git init first?";
+    _red ".git file not found, Please git init first.";
     return 1;
   fi
 
@@ -24,6 +24,10 @@ main() {
   fi
 
   cp -f ./commit-msg.sh .git/hooks/commit-msg
+  if [ -f git/hooks/commit-msg ]; then
+    _red "error to copy the commit-msg.sh to hooks directory";
+    return 1;
+  fi
 
   chmod +x .git/hooks/commit-msg
 
