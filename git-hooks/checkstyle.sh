@@ -3,11 +3,9 @@
 SCRIPT_PATH=`pwd`
 ${SCRIPT_PATH}/gradlew -PcheckCommit="true" checkstyle
 echo "=============$?"
-ss=`$? -eq 0`
-echo ss
-if [ $? -eq 0 ]; then
-    echo "checkstyle OK!"
-else
+if [ $? -ne 0 ]; then
     echo "checkstyle FAILED!"
     exit 1
+else
+    echo "checkstyle OK!"
 fi
