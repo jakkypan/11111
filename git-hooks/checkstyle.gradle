@@ -28,7 +28,7 @@ task checkstyle(type: Checkstyle) {
         exclude '**/R.java'
         exclude '**/BuildConfig.java'
         reports {
-            xml.destination file("$project.buildDir/reports/checkstyle/checkstyle-report.xml")
+            xml.destination file("/Users/panda/Desktop/11111/checkstyle-report.xml")
         }
         classpath = files()
         // 2021年3月份的checkstyle
