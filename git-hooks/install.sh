@@ -9,29 +9,31 @@ _red() {
 }
 
 main() {
+  root=`git rev-parse --show-toplevel`
+
   if [ "$(uname -s)" != "Darwin" ]; then
     _red "Unsupported operating system, Darwin?";
     return 1;
   fi
 
-  if [ ! -d ".git" ]; then 
+  if [ ! -d "${root}/.git" ]; then
     _red ".git file not found, Please git init first.";
     return 1;
   fi
 
-  if [ -f .git/hooks/commit-msg.sample ]; then
-    mv .git/hooks/commit-msg.sample .git/hooks/commit-msg.bak;
+  if [ -f "${root}/.git/hooks/commit-msg.sample" ]; then
+    mv ${root}/.git/hooks/commit-msg.sample ${root}/.git/hooks/commit-msg.bak;
   fi
 
-  cp -f ./commit-msg.sh .git/hooks/commit-msg
-  if [ -f git/hooks/commit-msg ]; then
+  cp -f ${root}/git-hooks/commit-msg.sh ${root}/.git/hooks/commit-msg
+  if [ ! -f "${root}/.git/hooks/commit-msg" ]; then
     _red "error to copy the commit-msg.sh to hooks directory";
     return 1;
   fi
 
-  chmod +x .git/hooks/commit-msg
+  chmod +x ${root}/.git/hooks/commit-msg
 
-  _green "commit-msg hook Install Success!"
+  _green "install commit message success!"
 }
 
 main "$@"

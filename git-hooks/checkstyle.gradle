@@ -1,0 +1,75 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+allprojects {
+    apply plugin: 'checkstyle'
+
+    checkstyle {
+        // 2021年3月最新版
+        toolVersion '8.41'
+        // 任何的失败，都会导致编译失败
+        ignoreFailures false
+        // 是否在console上显示错误
+        showViolations true
+    }
+}
+
+task checkstyle(type: Checkstyle) {
+    source project.rootDir
+    if (project.hasProperty('checkCommit') && project.property("checkCommit")) {
+        def ft = filterCommitter(getChangeFiles());
+        def includeList = new ArrayList<String>()
+        for (int i = 0; i < ft.size(); i++) {
+            includeList.add(ft[i])
+        }
+        if (includeList.size() > 0) {
+            println("includeList："+includeList)
+            include includeList
+        }
+        exclude '**/gen/**'
+        exclude '**/R.java'
+        exclude '**/BuildConfig.java'
+        reports {
+            xml.destination file("$project.buildDir/reports/checkstyle/checkstyle-report.xml")
+        }
+        classpath = files()
+        // 2021年3月份的checkstyle
+        configFile file('git-hooks/checkstyle.xml')
+        configProperties.lineWidth = 120
+    }
+}
+
+/**
+ * 得到修改的文件
+ *
+ * @return
+ */
+def getChangeFiles() {
+    try {
+        String changeInfo = 'git status -s'.execute(null, project.rootDir).text.trim()
+        return changeInfo == null ? "" : changeInfo
+    } catch (Exception e) {
+        e.printStackTrace()
+    }
+}
+
+/**
+ * 过滤掉java文件
+ *
+ * @param gitstatusinfo
+ * @return
+ */
+static def filterCommitter(String gitstatusinfo) {
+    ArrayList<String> filterList = new ArrayList<String>();
+    String[] lines = gitstatusinfo.split("\\n")
+    for (String line : lines) {
+        if (line.contains(".java")) {
+            String[] spliters = line.trim().split(" ");
+            for (String str : spliters) {
+                if (str.contains(".java")) {
+                    filterList.add(str)
+                }
+            }
+        }
+    }
+    return filterList;
+}
+
