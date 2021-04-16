@@ -1,0 +1,76 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+import java.nio.file.Files
+
+task installGitMessage(type: Exec) {
+  // 备份sample
+  File root = new File(project.rootDir, '.git/hooks')
+  File bak = new File(root, "commit-msg.bak")
+  if (bak.exists()) {
+    return
+  }
+  File sample = new File(root, "commit-msg.sample")
+  if(!sample.renameTo(bak)) {
+    throw GradleException("rename file error")
+  }
+  // 拷贝脚本
+  File gitRoot = new File(project.rootDir, 'git-hooks')
+  def suffix = "mac.sh"
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    suffix = "win.bat"
+  }
+  File msg = new File(gitRoot, "commit-msg-"+suffix)
+  File dest = new File(root, "commit-msg")
+  Files.copy(msg.toPath(), dest.toPath())
+
+//  from (project.rootDir.absolutePath+'/.git/hooks')
+//  into (project.rootDir.absolutePath+'/.git/hooks')
+//  rename("commit-msg.sample", "commit-msg.bak")
+//
+//  // 拷贝脚本
+//  def suffix = "mac.sh"
+//  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//    suffix = "win.bat"
+//  }
+//  from new File(project.rootDir, "git-hooks/commit-msg-$suffix")
+//  into { new File(project.rootDir, '.git/hooks') }
+//  rename("commit-msg-$suffix", "commit-msg")
+//  fileMode 0777
+}
+
+// 执行
+gradle.projectsEvaluated {
+  // insert git message
+  def buildTask = project.tasks.getByName('installGitMessage')
+  if (buildTask == null) {
+    throw GradleException("installGitMessage is not found, please add git-hooks into your project")
+  }
+  buildTask.finalizedBy
+  // check
+  File file = new File(project.rootDir, ".git/hooks/commit-msg")
+  println(file.absolutePath)
+  if (!file.exists()) {
+    throw GradleException("installGitMessage install failed,please check the gradle code")
+  }
+
+
+}
+
+//gradle.projectsEvaluated {
+//  def proc = './git-hooks/install.sh'.execute()
+//  def os = new StringBuffer()
+//  proc.waitForProcessOutput(os, System.err)
+//  print(os.toString())
+//  // 不成功，终止编译
+//  if (!os.toString().contains("success")) {
+//    throw new GradleException('occure error when insert commit message git hook，you can contact 大君')
+//  }
+//
+//  proc = './git-hooks/install-style.sh'.execute()
+//  os = new StringBuffer()
+//  proc.waitForProcessOutput(os, System.err)
+//  print(os.toString())
+//  // 不成功，终止编译
+//  if (!os.toString().contains("success")) {
+//    throw new GradleException('occure error when insert check style git hook，you can contact 大君')
+//  }
+//}
