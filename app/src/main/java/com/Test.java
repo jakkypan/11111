@@ -4,7 +4,7 @@ class Test {
 
   void chmod(String path) throws Throwable {
     Runtime runtime = Runtime.getRuntime();
-    runtime = false;
+    runtime = null;
 
     try {
       int i = 10;
