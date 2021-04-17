@@ -37,7 +37,7 @@ do
       break
   fi
 done
-if [ ${#SUBJECT} -lt 15 ]; then
+if [ ${#SUBJECT} -lt 10 ]; then
     echo "Commit message too short, at least greater than 10 characters，Please show more detail."
     exit 1
 fi

@@ -2,26 +2,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import java.nio.file.Files
 
 task installGitMessage(type: Exec) {
-  // 备份sample
-  File root = new File(project.rootDir, '.git/hooks')
-  File bak = new File(root, "commit-msg.bak")
-  if (bak.exists()) {
-    return
-  }
-  File sample = new File(root, "commit-msg.sample")
-  if(!sample.renameTo(bak)) {
-    throw GradleException("rename file error")
-  }
-  // 拷贝脚本
-  File gitRoot = new File(project.rootDir, 'git-hooks')
-  def suffix = "mac.sh"
-  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    suffix = "win.bat"
-  }
-  File msg = new File(gitRoot, "commit-msg-"+suffix)
-  File dest = new File(root, "commit-msg")
-  Files.copy(msg.toPath(), dest.toPath())
-
+  copyHooks("commit-msg")
 //  from (project.rootDir.absolutePath+'/.git/hooks')
 //  into (project.rootDir.absolutePath+'/.git/hooks')
 //  rename("commit-msg.sample", "commit-msg.bak")
@@ -37,23 +18,74 @@ task installGitMessage(type: Exec) {
 //  fileMode 0777
 }
 
+task installCodeStyle(type: Exec) {
+  copyHooks("pre-commit")
+}
+
 // 执行
 gradle.projectsEvaluated {
   // insert git message
-  def buildTask = project.tasks.getByName('installGitMessage')
-  if (buildTask == null) {
+  def installGitMsg = project.tasks.getByName('installGitMessage')
+  if (installGitMsg == null) {
     throw GradleException("installGitMessage is not found, please add git-hooks into your project")
   }
-  buildTask.finalizedBy
+  installGitMsg.finalizedBy
   // check
-  File file = new File(project.rootDir, ".git/hooks/commit-msg")
-  println(file.absolutePath)
+  def file = new File(project.rootDir, ".git/hooks/commit-msg")
   if (!file.exists()) {
     throw GradleException("installGitMessage install failed,please check the gradle code")
   }
+  chmod(file.absolutePath)
 
-
+  // insert code style
+  def installStyle = project.tasks.getByName('installCodeStyle')
+  if (installStyle == null) {
+    throw GradleException("installCodeStyle is not found, please add git-hooks into your project")
+  }
+  installStyle.finalizedBy
+  // check
+  file = new File(project.rootDir, ".git/hooks/pre-commit")
+  if (!file.exists()) {
+    throw GradleException("installCodeStyle install failed,please check the gradle code")
+  }
+  chmod(file.absolutePath)
 }
+
+
+def copyHooks(name) {
+  // 备份sample
+  def root = new File(project.rootDir, '.git/hooks')
+  def bak = new File(root, "${name}.bak")
+  if (bak.exists()) {
+    return
+  }
+  def sample = new File(root, "${name}.sample")
+  if(!sample.renameTo(bak)) {
+    throw GradleException("rename file error")
+  }
+  // 拷贝脚本
+  def gitRoot = new File(project.rootDir, 'git-hooks')
+  def suffix = "-mac.sh"
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    suffix = "-win.bat"
+  }
+  def msg = new File(gitRoot, name+suffix)
+  def dest = new File(root, name)
+  dest << msg.text
+}
+
+def chmod(path) {
+  def runtime = Runtime.getRuntime()
+  def command = "chmod 770 " + path
+  def process = runtime.exec(command)
+  process.waitFor()
+  def existValue = process.exitValue()
+  if(existValue != 0) {
+    throw GradleException("installGitMessage install failed due to chmod failed")
+  }
+}
+
+
 
 //gradle.projectsEvaluated {
 //  def proc = './git-hooks/install.sh'.execute()

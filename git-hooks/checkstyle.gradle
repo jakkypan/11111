@@ -6,7 +6,7 @@ allprojects {
         // 2021年3月最新版
         toolVersion '8.41'
         // 任何的失败，都会导致编译失败
-        ignoreFailures false
+        ignoreFailures true
         // 是否在console上显示错误
         showViolations true
     }
@@ -28,12 +28,26 @@ task checkstyle(type: Checkstyle) {
         exclude '**/R.java'
         exclude '**/BuildConfig.java'
         reports {
-            xml.destination file("/Users/panda/Desktop/11111/checkstyle-report.xml")
+            xml.destination file("$project.buildDir/reports/checkstyle/checkstyle-report.xml")
         }
         classpath = files()
         // 2021年3月份的checkstyle
         configFile file('git-hooks/checkstyle.xml')
         configProperties.lineWidth = 120
+    }
+}
+
+/**
+ * 唯一能检测到codestyle异常的办法
+ */
+tasks.withType(Checkstyle).each { checkstyleTask ->
+    checkstyleTask.doLast {
+        reports.all { report ->
+            def outputFile = report.destination
+            if (outputFile.exists() && outputFile.text.contains("<error ")) {
+                throw new GradleException("There were checkstyle warnings! For more info check $outputFile")
+            }
+        }
     }
 }
 
