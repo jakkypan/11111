@@ -1,15 +1,12 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-allprojects {
-    apply plugin: 'checkstyle'
+apply plugin: 'checkstyle'
 
-    checkstyle {
-        // 2021年3月最新版
-        toolVersion '8.41'
-        // 任何的失败，都会导致编译失败
-        ignoreFailures true
-        // 是否在console上显示错误
-        showViolations true
-    }
+checkstyle {
+    // 2021年3月最新版
+    toolVersion '6.3'
+    // 任何的失败，都会导致编译失败
+    ignoreFailures true
+    // 是否在console上显示错误
+    showViolations true
 }
 
 task checkstyle(type: Checkstyle) {

@@ -1,28 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<FindBugsFilter>
-    <!-- http://stackoverflow.com/questions/7568579/eclipsefindbugs-exclude-filter-files-doesnt-work -->
-    <Match>
-        <Class name="~.*\.R\$.*"/>
-    </Match>
-    <Match>
-    <Class name="~.*\.Manifest\$.*"/>
-    </Match>
+<?xml version="1.0"?>
 
-    <!-- All bugs in test classes, except for JUnit-specific bugs -->
-    <Match>
-        <Class name="~.*\.*Test" />
-        <Not>
-            <Bug code="IJU" />
-        </Not>
-    </Match>
+<ruleset name="All Java Rules"
+  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>Every Java Rule in PMD</description>
 
-    <!-- Do not check auto-generated classes (Dagger puts $ into class names) -->
-    <Match>
-        <Class name="~.*Dagger*.*"/>
-    </Match>
 
-    <!-- http://findbugs.sourceforge.net/bugDescriptions.html#ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD-->
-    <Match>
-        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
-    </Match>
-</FindBugsFilter>
+    <!-- Lexer test cases - wrong encoding, illegal characters, ... -->
+    <exclude-pattern>.*/ant/java/EncodingTestClass.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/cpd/badandgood/BadFile.java</exclude-pattern>
+
+    <!-- the following files produce parsing errors with java 9, as they use identifiers, that
+         are now reserved keywords and are forbidden to be used as identifiers.
+    -->
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/assert_test5.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/assert_test5_a.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/assert_test7.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/jdk14_enum.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/jdk9_invalid_identifier.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/java10/LocalVariableTypeInference_varAsAnnotationName.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/java10/LocalVariableTypeInference_varAsEnumName.java</exclude-pattern>
+    <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/java10/LocalVariableTypeInference_varAsTypeIdentifier.java</exclude-pattern>
+
+    <rule ref="category/java/bestpractices.xml" />
+    <rule ref="category/java/codestyle.xml" />
+    <rule ref="category/java/design.xml" />
+    <rule ref="category/java/documentation.xml" />
+    <rule ref="category/java/errorprone.xml" />
+    <rule ref="category/java/multithreading.xml" />
+    <rule ref="category/java/performance.xml" />
+    <rule ref="category/java/security.xml" />
+
+</ruleset>

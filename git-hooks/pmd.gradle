@@ -1,28 +1,27 @@
 apply plugin: 'pmd'
 
 pmd {
+    toolVersion = "6.33.0"
     ignoreFailures = false
     ruleSetFiles = files("pmd.xml")
+    reportsDir = file("$project.buildDir/reports/pmd")
+    consoleOutput = true
 }
 
 task pmd(type: Pmd) {
     source project.rootDir
-    exclude '**/gen/**'
-    exclude '**/R.java'
-    exclude '**/BuildConfig.java'
+    exclude '*'
 
     if (project.hasProperty('checkPmd') && project.property("checkPmd")) {
         def ft = filterCommitter(getChangeFiles())
         def includeList = new ArrayList<String>()
         for (int i = 0; i < ft.size(); i++) {
-            String spliter = ft.getAt(i)
-            String[] spliterlist = spliter.split("/")
-            String fileName = spliterlist[spliterlist.length - 1]
-            includeList.add("**/" + fileName)
+            includeList.add(ft[i])
         }
         if (includeList.size() == 0) {
             exclude '**/*.java'
         } else {
+            println("pmd includeList："+includeList)
             include includeList
         }
     } else {

@@ -1,6 +1,9 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import java.nio.file.Files
 
+apply from: 'git-hooks/checkstyle.gradle'
+apply from: 'git-hooks/pmd.gradle'
+
 task installGitMessage(type: Exec) {
   copyHooks("commit-msg")
 //  from (project.rootDir.absolutePath+'/.git/hooks')
