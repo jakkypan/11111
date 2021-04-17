@@ -5,6 +5,11 @@ class Test {
   void chmod(String path) throws Throwable {
     Runtime runtime = Runtime.getRuntime();
     runtime = false;
+    try {
+      int i = 10;
+    } catch (Throwable t){
+
+    }
     if (1==1) {
       if (1==1) {
         if (1==1) {
