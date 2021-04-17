@@ -8,21 +8,9 @@ class Test {
     if (1==1) {
       if (1==1) {
         if (1==1) {
-          if (1==1) {
 
-          } else if (2==2){
-
-          } else if (3==3){
-
-          }
         } else if (2==2){
-          if (1==1) {
 
-          } else if (2==2){
-
-          } else if (3==3){
-
-          }
         } else if (3==3){
 
         }
